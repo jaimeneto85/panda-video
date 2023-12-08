@@ -4,11 +4,11 @@
 node_modules/
 
 # Expo
-.expo/
+.expo/  
 dist/
 web-build/
 
-.env
+.env*
 
 # Native
 *.orig.*
