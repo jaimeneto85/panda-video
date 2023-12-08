@@ -4,22 +4,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import NetInfo from "@react-native-community/netinfo";
 
-function ExploreScreen() {
-  return (
-    <View style={layout.container}>
-      <Text>Explore</Text>
-    </View>
-  );
-}
-
-function ArchiveScreen() {
-  return (
-    <View style={layout.container}>
-      <Text>Archive</Text>
-    </View>
-  );
-}
+import ExploreScreen from "./modules/explore/Explore.screen";
+import ArchiveScreen from "./modules/offline/archive.screen";
 
 function VideoViewScreen() {
   return (
@@ -32,11 +20,20 @@ function VideoViewScreen() {
 const Tab = createBottomTabNavigator();
 
 function Tabs() {
+  const [connectionType, setConnectionType] = React.useState("");
+  const [isConnected, setIsConnected] = React.useState(true);
+  const [internetSpeed, setInternetSpeed] = React.useState(0);
+  NetInfo.fetch().then((state) => {
+    setConnectionType(state.type);
+    setIsConnected(state.isConnected);
+    setInternetSpeed(state.details?.downlink);
+  });
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName={isConnected ? "Explore" : "Archive"}
     >
       <Tab.Screen
         name="Explore"
@@ -69,12 +66,14 @@ const Stack = createStackNavigator();
 function GeneralStack() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="Tabs" component={Tabs} />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Tabs"
+          component={Tabs}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen name="VideoView" component={VideoViewScreen} />
       </Stack.Navigator>
     </NavigationContainer>
