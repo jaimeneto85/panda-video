@@ -15,7 +15,7 @@ import { downloadVideo, useDownload } from "../services/download";
 interface VideoItemProps {
   video: PandaVideo;
   shouldPlay?: boolean;
-  type?: "archive" | "explore";
+  type?: "archive" | "explore" | "view";
 }
 export const VideoItem = ({
   video,
@@ -27,8 +27,6 @@ export const VideoItem = ({
   const videoRef = React.useRef(null);
   const [status, setStatus] = React.useState({});
   const [connectionType, setConnectionType] = React.useState("");
-  const [isConnected, setIsConnected] = React.useState(true);
-  const [internetSpeed, setInternetSpeed] = React.useState(0);
 
   const { isLoading, progresss, setIsLoading, setProgress } = useDownload();
   const videoStorage = React.useMemo(async () => {
@@ -42,7 +40,7 @@ export const VideoItem = ({
     } catch (error) {
       console.log("error storage", error);
     }
-  }, [video]);
+  }, [video.id]);
 
   React.useEffect(() => {
     videoStorage.then((res) => {
@@ -52,10 +50,7 @@ export const VideoItem = ({
 
   NetInfo.fetch().then((state) => {
     setConnectionType(state.type);
-    setIsConnected(state.isConnected);
-    setInternetSpeed(state.details?.downlink);
   });
-
   const handleDownload = React.useCallback(() => {
     if (!isLoading && connectionType === "wifi") {
       downloadVideo(video, setIsLoading, setProgress);
@@ -89,19 +84,20 @@ export const VideoItem = ({
           }}
           style={[StyleSheet.absoluteFill, { flex: 1 }]}
           resizeMode={ResizeMode.CONTAIN}
-          shouldPlay
+          shouldPlay={shouldPlay}
           isMuted
           isLooping
-          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
           posterStyle={{
             resizeMode: "cover",
           }}
         />
-        <ButtonVideo
-          onPress={() => navigation.navigate("VideoView", { video })}
-        >
-          <MaterialIcons name="ondemand-video" size={24} color="white" />
-        </ButtonVideo>
+        {type !== "view" && (
+          <ButtonVideo
+            onPress={() => navigation.navigate("VideoView", { video })}
+          >
+            <MaterialIcons name="ondemand-video" size={24} color="white" />
+          </ButtonVideo>
+        )}
       </View>
     );
   } else {
@@ -114,7 +110,7 @@ export const VideoItem = ({
             uri: video.video_player,
           }}
         />
-        {!videoOffline?.uri && (
+        {type !== "view" && !videoOffline?.uri && (
           <ButtonVideo
             onPress={handleDownload}
             style={{ flexDirection: "row" }}
@@ -132,11 +128,13 @@ export const VideoItem = ({
             )}
           </ButtonVideo>
         )}
-        <ButtonVideo
-          onPress={() => navigation.navigate("VideoView", { video })}
-        >
-          <MaterialIcons name="ondemand-video" size={24} color="white" />
-        </ButtonVideo>
+        {type !== "view" && (
+          <ButtonVideo
+            onPress={() => navigation.navigate("VideoView", { video })}
+          >
+            <MaterialIcons name="ondemand-video" size={24} color="white" />
+          </ButtonVideo>
+        )}
       </View>
     );
   }

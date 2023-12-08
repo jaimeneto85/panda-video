@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import { useState } from 'react';
+import { Alert } from 'react-native';
+import { PandaVideo } from '../video/video.type';
 
 async function downloadVideo(video, setIsLoading, setProgress) {
   
@@ -54,7 +56,7 @@ async function downloadVideo(video, setIsLoading, setProgress) {
     }
     AsyncStorage.setItem('@videos', JSON.stringify(videoList));
     setProgress(0);
-    return localUri;
+    return videoOffline;
   } catch (e) {
     console.error(e);
   } finally {
@@ -77,5 +79,37 @@ function useDownload() {
   }
 }
 
+async function deleteVideo(video: PandaVideo, callback?: (error?: Error) => void): Promise<void> {
+  Alert.alert(
+    "Excluir vídeo",
+    `Deseja excluir o vídeo ${video.title}?`,
+    [
+      {
+        text: "Cancelar",
+        style: "cancel"
+      },
+      { text: "Excluir", onPress: () => handleDelete() }
+    ]
+  );
 
-export { downloadVideo, useDownload }
+  const handleDelete = async () => {
+    try {
+      const videoListRaw = await AsyncStorage.getItem('@videos');
+      const videoList = videoListRaw ? JSON.parse(videoListRaw) : [];
+      const videoIndex = videoList.findIndex((item) => item.id === video.id);
+      videoList.splice(videoIndex, 1);
+      AsyncStorage.setItem('@videos', JSON.stringify(videoList));
+      await FileSystem.deleteAsync(video.uri);
+      if(callback !== undefined) {
+        callback();
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+}
+
+
+export { downloadVideo, useDownload, deleteVideo }

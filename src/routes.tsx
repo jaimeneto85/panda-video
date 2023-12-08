@@ -8,14 +8,7 @@ import NetInfo from "@react-native-community/netinfo";
 
 import ExploreScreen from "./modules/explore/Explore.screen";
 import ArchiveScreen from "./modules/offline/archive.screen";
-
-function VideoViewScreen() {
-  return (
-    <View style={layout.container}>
-      <Text>VideoView</Text>
-    </View>
-  );
-}
+import { VideoScreen } from "./modules/video/video.screen";
 
 const Tab = createBottomTabNavigator();
 
@@ -74,7 +67,7 @@ function GeneralStack() {
             headerShown: false,
           }}
         />
-        <Stack.Screen name="VideoView" component={VideoViewScreen} />
+        <Stack.Screen name="VideoView" component={VideoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

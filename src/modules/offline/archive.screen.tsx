@@ -4,10 +4,12 @@ import { Container, TitleScreen } from "./archive.screen.style";
 
 import { VideoItem } from "../video/Video.component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ArchiveScreen() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const navigation = useNavigation();
 
   const fetch = React.useCallback(async () => {
     setLoading(true);
@@ -21,6 +23,14 @@ export default function ArchiveScreen() {
       setLoading(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   React.useEffect(() => {
     AsyncStorage.getItem("@videos").then((res) => {

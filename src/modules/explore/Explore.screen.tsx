@@ -12,44 +12,13 @@ import { Container, TitleScreen } from "./Explore.screen.style";
 import { VideoItem } from "../video/Video.component";
 
 import { getVideos, useRequestProcessor } from "./Explore.service";
-
-const VIDEO_LIST = [
-  {
-    id: "0",
-    source: { uri: "https://www.youtube.com/watch?v=0uGETVnkujA" },
-    title: "Video 1",
-    description: "Description 1",
-  },
-  {
-    id: "1",
-    source: { uri: "https://www.youtube.com/watch?v=0uGETVnkujA" },
-    title: "Video 2",
-    description: "Description 2",
-  },
-  {
-    id: "2",
-    source: { uri: "https://www.youtube.com/watch?v=0uGETVnkujA" },
-    title: "Video 3",
-    description: "Description 3",
-  },
-  {
-    id: "3",
-    source: { uri: "https://www.youtube.com/watch?v=0uGETVnkujA" },
-    title: "Video 4",
-    description: "Description 4",
-  },
-  {
-    id: "4",
-    source: { uri: "https://www.youtube.com/watch?v=0uGETVnkujA" },
-    title: "Video 5",
-    description: "Description 5",
-  },
-];
+import { useNavigation } from "@react-navigation/native";
 
 function ExploreScreen() {
   const [page, setPage] = React.useState(1);
   const limit = 10;
   const { query } = useRequestProcessor();
+  const navigation = useNavigation();
 
   const { data, isLoading, isError, refetch } = query(
     ["videos", page],
@@ -58,6 +27,14 @@ function ExploreScreen() {
       enabled: true,
     }
   );
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   const Header = () => (
     <Container>
       <TitleScreen>Explore</TitleScreen>
