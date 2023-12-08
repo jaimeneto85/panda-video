@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395188170113",
+    "project_id": "panda-challenge-jaimeneto85",
+    "storage_bucket": "panda-challenge-jaimeneto85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395188170113:android:f55ed5ded441e6004b8c80",
+        "android_client_info": {
+          "package_name": "com.jaimeflneto.pandaVideo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaSXxeKARghIxIdSb6FxecEl0MtCMPmmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
