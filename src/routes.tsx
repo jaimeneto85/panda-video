@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import NetInfo from "@react-native-community/netinfo";
+import analytics from "@react-native-firebase/analytics";
 
 import ExploreScreen from "./modules/explore/Explore.screen";
 import ArchiveScreen from "./modules/offline/archive.screen";
@@ -57,8 +58,27 @@ function Tabs() {
 const Stack = createStackNavigator();
 
 function GeneralStack() {
+  const routeNameRef = React.useRef();
+  const navigationRef = React.useRef();
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = navigationRef.current.getCurrentRoute().name;
+
+        if (previousRouteName !== currentRouteName) {
+          await analytics().logScreenView({
+            screen_name: currentRouteName,
+            screen_class: currentRouteName,
+          });
+        }
+        routeNameRef.current = currentRouteName;
+      }}
+    >
       <Stack.Navigator>
         <Stack.Screen
           name="Tabs"
